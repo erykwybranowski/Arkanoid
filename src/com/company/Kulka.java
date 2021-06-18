@@ -16,21 +16,26 @@ class Kulka extends Ellipse2D.Float {
         this.p = p;
         this.dx = dx;
         this.dy = dy;
+
     }
 
     void nextKrok() {
-        x += dx;
-        y += dy;
 
+        x += dx;
+        //dy = 4 - Math.abs(dx);
+        y += dy;
         // odbicia od ścian
         if (getMinX() < 0 || getMaxX() > p.getWidth())
             dx = -dx;
         if (getMinY() < 0 || getMaxY() > p.getHeight())
             dy = -dy;
+        if (getMaxY() > p.getHeight()) {
+            dy = -dy;
+            changeScoreBy(-1);
+        }
 
         // kolizja kulki z belką
         if (this.intersects(p.b)) {
-            //System.out.println(Integer.toBinaryString(p.b.outcode(this.x + this.width/2, this.y + this.height/2)));
             int ballPosition = p.b.outcode(this.x + this.width / 2, this.y + this.height / 2);
 
             if ((ballPosition & p.b.OUT_TOP) == p.b.OUT_TOP)
@@ -43,9 +48,23 @@ class Kulka extends Ellipse2D.Float {
 //                    dx = -dx;
         }
 
-        p.cegielki.removeIf(this::intersects);
+        boolean cegielkaColision = p.cegielki.removeIf(this::intersects);
+        if (cegielkaColision) {
+            dy = -dy;
+            changeScoreBy(1);
+        }
 
         p.repaint();
         Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void changeScoreBy(int change) {
+        try {
+            p.jTextField.setText(String.valueOf(Integer.parseInt(p.jTextField.getText()) + change));
+        } catch (NullPointerException e) {
+
+        } catch (NumberFormatException e){
+
+        }
     }
 }

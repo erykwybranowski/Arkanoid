@@ -11,6 +11,7 @@ class Plansza extends JPanel implements MouseMotionListener {
     Kulka a;
     SilnikKulki s;
     List<Cegielka> cegielki = new ArrayList<>();
+    JTextField jTextField;
 
     Plansza() {
         super();
